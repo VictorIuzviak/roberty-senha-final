@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Senha Temporária · Gerador local</title>
+  <meta name="description" content="Gere senhas fortes direto no navegador, com tempo de validade ajustável. Nada é enviado nem armazenado online.">
+  <meta name="theme-color" content="#f9f7ec">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2308995f'/%3E%3Cpath d='M16 7l2.2 5.8L24 15l-5.8 2.2L16 23l-2.2-5.8L8 15l5.8-2.2z' fill='%23fff'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ícones (sprite inline, estilo Lucide) -->
+  <svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-sparkles" viewBox="0 0 24 24">
+      <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>
+      <path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>
+    </symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24">
+      <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/>
+      <path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24">
+      <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/>
+      <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/>
+      <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/>
+      <path d="m2 2 20 20"/>
+    </symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24">
+      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24">
+      <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+    </symbol>
+    <symbol id="i-send" viewBox="0 0 24 24">
+      <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <path d="M20 6 9 17l-5-5"/>
+    </symbol>
+    <symbol id="i-circle-check" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+    </symbol>
+    <symbol id="i-history" viewBox="0 0 24 24">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/>
+    </symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24">
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+    </symbol>
+  </svg>
+
+  <div class="app">
+
+    <!-- ============ PAINEL DE CONFIGURAÇÃO ============ -->
+    <aside class="panel" aria-label="Configurações da senha">
+      <div class="panel__inner">
+        <p class="eyebrow">
+          <svg class="icon icon--sm" aria-hidden="true"><use href="#i-sparkles"/></svg>
+          Gerador local
+        </p>
+
+        <h1 class="headline">Senha forte.<span>Tempo certo.</span></h1>
+        <p class="lead">Crie credenciais únicas, controle por quanto tempo elas vivem e compartilhe com segurança.</p>
+
+        <form id="generator-form" class="form" autocomplete="off" novalidate>
+
+          <!-- Presets -->
+          <div class="field" role="group" aria-labelledby="lbl-presets">
+            <p class="label" id="lbl-presets">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-wand"/></svg>
+              Presets rápidos
+            </p>
+            <div class="chips">
+              <button type="button" class="chip" data-preset="pin" aria-pressed="false">PIN</button>
+              <button type="button" class="chip" data-preset="wifi" aria-pressed="false">Wi-Fi</button>
+              <button type="button" class="chip" data-preset="max" aria-pressed="false">Alta segurança</button>
+            </div>
+          </div>
+
+          <!-- Tamanho -->
+          <div class="field">
+            <div class="label-row">
+              <label class="label" for="length">Tamanho da senha</label>
+              <output class="length-out" for="length" id="length-value"><b id="length-number">16</b> <span>car.</span></output>
+            </div>
+            <input class="range" type="range" id="length" name="length" min="4" max="64" step="1" value="16">
+            <div class="range-scale" aria-hidden="true"><span>4</span><span>64</span></div>
+          </div>
+
+          <!-- Conjuntos -->
+          <div class="field" role="group" aria-labelledby="lbl-sets">
+            <p class="label" id="lbl-sets">Conjuntos permitidos</p>
+
+            <div class="sets">
+              <label class="set">
+                <input type="checkbox" name="set" value="upper" checked>
+                <span class="set__surface" aria-hidden="true"></span>
+                <span class="set__text"><strong>Maiúsculas</strong><small>A-Z</small></span>
+                <svg class="icon icon--sm set__tick" aria-hidden="true"><use href="#i-check"/></svg>
+              </label>
+
+              <label class="set">
+                <input type="checkbox" name="set" value="lower" checked>
+                <span class="set__surface" aria-hidden="true"></span>
+                <span class="set__text"><strong>Minúsculas</strong><small>a-z</small></span>
+                <svg class="icon icon--sm set__tick" aria-hidden="true"><use href="#i-check"/></svg>
+              </label>
+
+              <label class="set">
+                <input type="checkbox" name="set" value="digits" checked>
+                <span class="set__surface" aria-hidden="true"></span>
+                <span class="set__text"><strong>Números</strong><small>0-9</small></span>
+                <svg class="icon icon--sm set__tick" aria-hidden="true"><use href="#i-check"/></svg>
+              </label>
+
+              <label class="set">
+                <input type="checkbox" name="set" value="symbols" checked>
+                <span class="set__surface" aria-hidden="true"></span>
+                <span class="set__text"><strong>Símbolos</strong><small id="symbols-hint">!@#$</small></span>
+                <svg class="icon icon--sm set__tick" aria-hidden="true"><use href="#i-check"/></svg>
+              </label>
+            </div>
+
+            <input class="text-input" type="text" id="symbols" name="symbols"
+                   value="!@#$%^&amp;*()_+-=[]{}|;:,.&lt;&gt;?"
+                   spellcheck="false" autocomplete="off" aria-label="Símbolos permitidos">
+          </div>
+
+          <!-- Duração -->
+          <div class="field">
+            <div class="label-row">
+              <label class="label" for="duration">Tempo de duração</label>
+              <svg class="icon icon--sm muted" aria-hidden="true"><use href="#i-clock"/></svg>
+            </div>
+            <select class="select" id="duration" name="duration">
+              <option value="30" data-short="30s">30 segundos</option>
+              <option value="60" data-short="1min" selected>1 minuto</option>
+              <option value="300" data-short="5min">5 minutos</option>
+              <option value="900" data-short="15min">15 minutos</option>
+              <option value="1800" data-short="30min">30 minutos</option>
+              <option value="3600" data-short="1h">1 hora</option>
+              <option value="86400" data-short="24h">24 horas</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary">
+            <svg class="icon" aria-hidden="true"><use href="#i-sparkles"/></svg>
+            Gerar senha temporária
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- ============ ÁREA PRINCIPAL ============ -->
+    <main class="stage">
+      <header class="stage__head">
+        <div>
+          <p class="eyebrow eyebrow--dark">Credencial ativa</p>
+          <h2 class="stage__title">Sua senha temporária</h2>
+        </div>
+        <span class="status" id="status" data-state="idle">Aguardando</span>
+      </header>
+
+      <div class="board">
+
+        <!-- Cofre da senha -->
+        <section class="card vault" id="vault" data-state="idle" aria-label="Senha gerada">
+          <div class="vault__top">
+            <span class="tag">
+              <svg class="icon icon--sm" aria-hidden="true"><use href="#i-lock"/></svg>
+              Acesso protegido
+            </span>
+            <time class="meta" id="generated-at">—</time>
+          </div>
+
+          <div class="vault__body">
+            <output class="password is-empty" id="password">Configure ao lado e gere sua senha.</output>
+          </div>
+
+          <div class="vault__bottom">
+            <div class="vault__row">
+              <div class="actions">
+                <button type="button" class="btn-action" id="toggle-visibility" disabled>
+                  <svg class="icon icon--sm" aria-hidden="true"><use id="toggle-icon" href="#i-eye-off"/></svg>
+                  <span id="toggle-label">Ocultar</span>
+                </button>
+                <button type="button" class="btn-action btn-action--outline" id="copy-btn" disabled>
+                  <svg class="icon icon--sm" aria-hidden="true"><use href="#i-copy"/></svg>
+                  <span id="copy-label">Copiar</span>
+                </button>
+                <button type="button" class="btn-action btn-action--outline" id="email-btn" aria-expanded="false" aria-controls="email-form" disabled>
+                  <svg class="icon icon--sm" aria-hidden="true"><use href="#i-mail"/></svg>
+                  Email
+                </button>
+              </div>
+              <p class="vault__note">Não armazenada online</p>
+            </div>
+
+            <form class="mailer" id="email-form" novalidate hidden>
+              <div class="mailer__row">
+                <label class="sr-only" for="email-input">E-mail de quem vai receber a senha</label>
+                <input class="text-input mailer__input" type="email" id="email-input" placeholder="destinatario@exemplo.com" autocomplete="off" required>
+                <button type="submit" class="btn-action btn-action--solid">
+                  <svg class="icon icon--sm" aria-hidden="true"><use href="#i-send"/></svg>
+                  Enviar
+                </button>
+              </div>
+              <p class="mailer__hint">Abre o seu app de e-mail com a senha já escrita. Nada passa por servidores.</p>
+            </form>
+          </div>
+        </section>
+
+        <!-- Timer -->
+        <section class="card timer" id="timer-card" data-tone="idle" aria-label="Tempo restante">
+          <div class="ring">
+            <svg class="ring__svg" viewBox="0 0 140 140" aria-hidden="true">
+              <circle class="ring__track" cx="70" cy="70" r="64"/>
+              <circle class="ring__bar" id="ring-progress" cx="70" cy="70" r="64"/>
+            </svg>
+            <div class="ring__label">
+              <span class="ring__time" id="time" role="timer" data-long="false">--:--</span>
+              <span class="ring__caption">Restante</span>
+            </div>
+          </div>
+          <p class="timer__foot">Tempo de validade</p>
+        </section>
+
+        <!-- Força estimada -->
+        <section class="card strength" id="strength-card" data-tone="strong" aria-label="Força estimada">
+          <div class="strength__head">
+            <p class="mono-label">Força estimada</p>
+            <span class="bits" id="strength-bits">0 bits</span>
+          </div>
+          <p class="strength__label" id="strength-label">—</p>
+          <div class="meter" id="strength-meter" role="progressbar" aria-label="Força estimada da senha" aria-valuemin="0" aria-valuemax="128" aria-valuenow="0">
+            <span id="strength-bar"></span>
+          </div>
+          <p class="strength__note" id="strength-note"></p>
+        </section>
+      </div>
+
+      <!-- Histórico (só guarda as configurações, nunca a senha) -->
+      <section class="history" aria-labelledby="history-title">
+        <div class="history__head">
+          <svg class="icon icon--sm muted" aria-hidden="true"><use href="#i-history"/></svg>
+          <h3 class="label" id="history-title">Gerações recentes</h3>
+          <span class="count" id="history-count">0/5</span>
+        </div>
+        <ul class="history__list" id="history-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Avisos -->
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
