@@ -2,10 +2,20 @@
    Senha Temporária — script.js
    Tudo roda no navegador: a senha nunca é enviada nem salva.
    ========================================================= */
+
+/* =========================================================
+   TÓPICO 1: Módulo Principal e Configuração Inicial
+   - Usa IIFE (Immediately Invoked Function Expression) para isolar o escopo e evitar poluição global.
+   - Ativa o modo estrito ('use strict') para pegar erros comuns de sintaxe e boas práticas.
+   ========================================================= */
 (() => {
   'use strict';
 
-  /* ---------- Constantes ---------- */
+  /* =========================================================
+     TÓPICO 2: Constantes Globais
+     - Define caracteres permitidos, limites de histórico, propriedades do SVG e presets prontos (PIN, Wi-Fi, Max).
+     - Mapeia os níveis de força da senha com base na entropia (bits).
+     ========================================================= */
   const DEFAULT_SYMBOLS = '!@#$%^&*()_+-=[]{}|;:,.<>?';
   const UPPER = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
   const LOWER = Array.from('abcdefghijklmnopqrstuvwxyz');
@@ -32,7 +42,11 @@
 
   const STATUS_LABEL = { idle: 'Aguardando', active: 'Em uso', expired: 'Expirada' };
 
-  /* ---------- Elementos ---------- */
+  /* =========================================================
+     TÓPICO 3: Seletores de Elementos DOM
+     - Atalhos simplificados ($ e $$) para buscar elementos na página de forma limpa.
+     - Objeto 'els' centraliza todas as referências aos componentes visuais do HTML.
+     ========================================================= */
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
@@ -75,7 +89,11 @@
     toasts: $('#toasts'),
   };
 
-  /* ---------- Estado (apenas em memória) ---------- */
+  /* =========================================================
+     TÓPICO 4: Gerenciamento de Estado
+     - Armazena dados voláteis apenas em memória (senhas, prazos, histórico de configurações).
+     - Garante segurança por não salvar senhas permanentemente em banco ou localStorage.
+     ========================================================= */
   const state = {
     password: '',
     length: 0,
@@ -92,7 +110,10 @@
     history: [],
   };
 
-  /* ---------- Utilidades ---------- */
+  /* =========================================================
+     TÓPICO 5: Funções Utilitárias
+     - Formatação de tempo, relógio, tratamento de caracteres únicos e geração de números aleatórios seguros (`crypto.getRandomValues`).
+     ========================================================= */
   const pad2 = (n) => String(n).padStart(2, '0');
 
   function formatTime(totalSeconds) {
@@ -105,13 +126,11 @@
   const formatClock = (date) =>
     date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-  /** Caracteres únicos, sem espaços (respeita emojis/pares substitutos). */
   const uniqueChars = (text) => [...new Set(Array.from(text).filter((c) => !/\s/.test(c)))];
 
-  /** Inteiro aleatório uniforme em [0, max) usando crypto (sem viés de módulo). */
   function randomInt(max) {
     if (max <= 1) return 0;
-    const range = 0x100000000; // 2^32
+    const range = 0x100000000;
     const limit = range - (range % max);
     const buf = new Uint32Array(1);
     let x;
@@ -132,7 +151,10 @@
     return svg;
   }
 
-  /* ---------- Configuração ---------- */
+  /* =========================================================
+     TÓPICO 6: Leitura e Aplicação de Configurações
+     - Lê o formulário ativo na tela, monta os pools de caracteres e estima a força (entropia).
+     ========================================================= */
   function readConfig() {
     const on = (name) => els.sets.find((input) => input.value === name).checked;
     const option = els.duration.selectedOptions[0];
@@ -189,13 +211,14 @@
     syncUI();
   }
 
-  /* ---------- Geração ---------- */
+  /* =========================================================
+     TÓPICO 7: Algoritmo de Geração de Senha
+     - Garante pelo menos um caractere de cada conjunto selecionado, preenche o resto aleatoriamente e embaralha (Fisher-Yates).
+     ========================================================= */
   function buildPassword(length, pools, alphabet) {
-    // garante ao menos um caractere de cada conjunto escolhido
     const out = pools.slice(0, length).map((pool) => pool[randomInt(pool.length)]);
     while (out.length < length) out.push(alphabet[randomInt(alphabet.length)]);
 
-    // embaralha (Fisher–Yates com aleatoriedade segura)
     for (let i = out.length - 1; i > 0; i -= 1) {
       const j = randomInt(i + 1);
       [out[i], out[j]] = [out[j], out[i]];
@@ -237,7 +260,10 @@
     toast('Senha temporária criada', `Válida por ${cfg.short}.`);
   }
 
-  /* ---------- Renderização ---------- */
+  /* =========================================================
+     TÓPICO 8: Renderização e Feedback Visual
+     - Atualiza a interface, barômetro de força, animação de revelação e exibição de cofres.
+     ========================================================= */
   function renderStrength(cfg) {
     const { size, bits } = estimate(cfg);
     const level = LEVELS.find((l) => bits < l.max);
@@ -310,7 +336,6 @@
     if (!state.active) closeMailer();
   }
 
-  /** Efeito rápido de "embaralhar" até revelar a senha (desligado com movimento reduzido). */
   function playReveal(finalText) {
     if (REDUCED_MOTION) return;
     const chars = Array.from(finalText);
@@ -333,7 +358,10 @@
     state.raf = requestAnimationFrame(frame);
   }
 
-  /* ---------- Timer ---------- */
+  /* =========================================================
+     TÓPICO 9: Gerenciamento do Timer e Expiração
+     - Controla a contagem regressiva da validade da senha e dispara o término quando o tempo esgota.
+     ========================================================= */
   function setRing(ratio) {
     els.ring.style.strokeDashoffset = String(RING_CIRC * (1 - ratio));
   }
@@ -372,7 +400,7 @@
     state.timerId = null;
     state.active = false;
     state.expired = true;
-    state.password = ''; // descarta a senha
+    state.password = '';
 
     els.time.textContent = '00:00';
     els.time.dataset.long = 'false';
@@ -383,14 +411,17 @@
     toast('Senha expirada', 'A senha foi descartada desta página.', 'warn');
   }
 
-  /* ---------- Ações da senha ---------- */
+  /* =========================================================
+     TÓPICO 10: Interações (Cópia, Visibilidade e E-mail)
+     - Copia a senha para a área de transferência, oculta/mostra caracteres e prepara envio por e-mail via `mailto:`.
+     ========================================================= */
   async function writeClipboard(text) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
         return true;
       }
-    } catch (_) { /* cai no plano B */ }
+    } catch (_) {}
 
     const area = document.createElement('textarea');
     area.value = text;
@@ -435,7 +466,7 @@
   function closeMailer() {
     els.emailForm.hidden = true;
     els.emailBtn.setAttribute('aria-expanded', 'false');
-  }
+    }
 
   function sendByEmail(event) {
     event.preventDefault();
@@ -462,7 +493,10 @@
     toast('Abrindo seu app de e-mail', 'Revise a mensagem antes de enviar.');
   }
 
-  /* ---------- Histórico (só configurações, nunca a senha) ---------- */
+  /* =========================================================
+     TÓPICO 11: Histórico de Configurações
+     - Guarda apenas as preferências geradas anteriormente (nunca a senha em si) para reutilização rápida.
+     ========================================================= */
   function pushHistory(cfg) {
     state.history.unshift({
       length: cfg.length, upper: cfg.upper, lower: cfg.lower, digits: cfg.digits,
@@ -504,7 +538,10 @@
     });
   }
 
-  /* ---------- Avisos ---------- */
+  /* =========================================================
+     TÓPICO 12: Sistema de Toasts (Notificações Flutuantes)
+     - Cria, exibe e remove mensagens rápidas flutuantes na tela para dar feedback ao usuário.
+     ========================================================= */
   function toast(title, message, tone = 'success') {
     const el = document.createElement('div');
     el.className = `toast toast--${tone}`;
@@ -530,7 +567,10 @@
     }, 3600);
   }
 
-  /* ---------- Eventos ---------- */
+  /* =========================================================
+     TÓPICO 13: Registro de Eventos (Event Listeners)
+     - Vincula cliques, envios de formulário, atalhos e mudanças de aba aos comportamentos correspondentes.
+     ========================================================= */
   els.form.addEventListener('submit', (event) => {
     event.preventDefault();
     generate();
@@ -538,7 +578,6 @@
 
   els.form.addEventListener('input', syncUI);
 
-  // sempre mantém ao menos um conjunto ativo
   els.sets.forEach((input) => {
     input.addEventListener('change', () => {
       if (!els.sets.some((s) => s.checked)) {
@@ -574,12 +613,14 @@
     toast('Configuração restaurada', 'Ajuste o que quiser e gere de novo.');
   });
 
-  // abas em segundo plano atrasam timers: confere o relógio ao voltar
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) tick();
   });
 
-  /* ---------- Início ---------- */
+  /* =========================================================
+     TÓPICO 14: Inicialização da Aplicação
+     - Prepara o SVG do anel de progresso, sincroniza a interface pela primeira vez e limpa os estados iniciais.
+     ========================================================= */
   els.ring.style.strokeDasharray = String(RING_CIRC);
   els.ring.style.strokeDashoffset = String(RING_CIRC);
   syncUI();
